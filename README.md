@@ -10,6 +10,7 @@ Spun out of UACP per ADR 0038. Sibling protocols: [UACP](https://github.com/hn2/
 
 - [`spec/v0.1/AAP.md`](spec/v0.1/AAP.md) — normative specification
 - [`schema/action-descriptor.schema.json`](schema/action-descriptor.schema.json) — JSON Schema
+- [`examples/`](examples/) — concrete descriptors: MCP search_web, Anthropic computer_use, OpenAI get_weather
 
 ## Key concepts
 

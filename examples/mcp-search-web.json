@@ -1,0 +1,43 @@
+{
+  "aap_version": "0.1",
+  "id": "e8a2b4c6-1111-0000-aaaa-000000000001",
+  "name": "search_web",
+  "version": "1.0.0",
+  "description": "Search the web and return top results. Mapped from MCP tool search_web.",
+  "side_effects": ["network"],
+  "input_schema": {
+    "type": "object",
+    "required": ["query"],
+    "properties": {
+      "query": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024,
+        "description": "Search query string."
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "results": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "url": { "type": "string" },
+            "snippet": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "invocation": {
+    "mode": "sync",
+    "timeout_ms": 10000,
+    "idempotent": true
+  },
+  "vendor": "generic",
+  "descriptor_signature": "sha256:8831d493a172e0e1a7e7effb62df05f559531b2118053000d8eab3e8caffbe66"
+}
