@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/hn2/aap/spec/v0.1/action-descriptor.schema.json",
+  "title": "AAP Action Descriptor v0.1",
+  "description": "JSON Schema for an AAP Action Descriptor — describes a callable action that can cross AI vendor boundaries.",
+  "type": "object",
+  "required": [
+    "aap_version",
+    "id",
+    "name",
+    "version",
+    "description",
+    "side_effects",
+    "input_schema",
+    "descriptor_signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "aap_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "AAP spec version. Must be '0.1' for this spec version."
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "description": "Stable identifier for this action. UUID v4 recommended."
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Machine-readable snake_case name. Namespaced vendor actions use double-underscore: vendor__action."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$",
+      "description": "Semver version of this action descriptor."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Human-readable description of what the action does."
+    },
+    "side_effects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["none", "network", "file_read", "file_write", "database_read", "database_write", "ui", "process", "secret_access"]
+      },
+      "uniqueItems": true,
+      "description": "Side-effect classification. Empty = none. 'none' must not appear with other values."
+    },
+    "input_schema": {
+      "type": "object",
+      "description": "JSON Schema (draft-07) describing the input parameters."
+    },
+    "descriptor_signature": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "SHA-256 hash of this descriptor's canonical JSON (signature field removed). Format: sha256:<hex>."
+    },
+    "output_schema": {
+      "type": "object",
+      "description": "JSON Schema (draft-07) describing the output. Optional."
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "description": "If true, invocation requires explicit user authorization. Default: false."
+        },
+        "scopes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "description": "OAuth2-style scope strings required."
+        },
+        "principal_kind": {
+          "type": "string",
+          "enum": ["user", "operator", "system"],
+          "description": "Who must authorize: user (default), operator, or system."
+        }
+      }
+    },
+    "invocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["sync", "async", "streaming"],
+          "description": "Invocation mode. Default: sync."
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum execution time in milliseconds."
+        },
+        "idempotent": {
+          "type": "boolean",
+          "description": "Whether repeated calls with the same input produce the same result."
+        },
+        "cancellable": {
+          "type": "boolean",
+          "description": "Whether in-flight invocations can be cancelled."
+        }
+      }
+    },
+    "vendor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Vendor slug that exposes this action (e.g., cursor, anthropic)."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "maxItems": 32,
+      "uniqueItems": true,
+      "description": "Free-form labels."
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "aap",
+  "version": "0.1.0",
+  "description": "AAP — Agent Action Protocol",
+  "type": "commonjs",
+  "license": "Apache-2.0"
+}
