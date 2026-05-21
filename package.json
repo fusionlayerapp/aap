@@ -2,6 +2,9 @@
   "name": "aap",
   "version": "0.1.0",
   "description": "AAP — Agent Action Protocol",
-  "type": "commonjs",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tools/aap-validate/__tests__/validate.test.js"
+  },
   "license": "Apache-2.0"
 }
