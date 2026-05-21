@@ -4,7 +4,11 @@
   "description": "AAP — Agent Action Protocol",
   "type": "module",
   "scripts": {
-    "test": "node --test tools/aap-validate/__tests__/validate.test.js"
+    "test": "node --test tools/aap-validate/__tests__/validate.test.js",
+    "validate": "node tools/aap-validate/index.js"
   },
+  "workspaces": [
+    "tools/aap-validate"
+  ],
   "license": "Apache-2.0"
 }

@@ -12,6 +12,30 @@ Spun out of UACP per ADR 0038. Sibling protocols: [UACP](https://github.com/hn2/
 - [`schema/action-descriptor.schema.json`](schema/action-descriptor.schema.json) — JSON Schema
 - [`examples/`](examples/) — concrete descriptors: MCP search_web, Anthropic computer_use, OpenAI get_weather
 
+## Validate a descriptor
+
+```bash
+# one-off (no install)
+npx aap-validate examples/mcp-search-web.json
+
+# or install globally
+npm install -g aap-validate
+aap-validate my-action.json
+
+# programmatic
+import { validate } from 'aap-validate'
+const result = validate(JSON.parse(fs.readFileSync('my-action.json', 'utf8')))
+if (!result.valid) console.error(result.errors)
+```
+
+Exit code 0 = valid. Exit code 1 = validation errors. Exit code 2 = cannot read file.
+
+## Run tests
+
+```bash
+npm test
+```
+
 ## Key concepts
 
 An **Action Descriptor** describes a callable action:
