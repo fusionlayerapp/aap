@@ -25,6 +25,19 @@ const NAME_PATTERN = /^[a-z][a-z0-9_]*$/
 const SEMVER_PATTERN = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/
 const SHA256_SIG_PATTERN = /^sha256:[0-9a-f]{64}$/
 
+// additionalProperties: false in schema/action-descriptor.schema.json — kept in sync with it.
+const KNOWN_ROOT_KEYS = new Set([
+  'aap_version', 'id', 'name', 'version', 'description', 'side_effects',
+  'input_schema', 'descriptor_signature', 'output_schema', 'authorization',
+  'invocation', 'vendor', 'tags',
+])
+const KNOWN_AUTHORIZATION_KEYS = new Set(['required', 'scopes', 'principal_kind'])
+const KNOWN_INVOCATION_KEYS = new Set(['mode', 'timeout_ms', 'idempotent', 'cancellable'])
+
+function unknownKeys(obj, known) {
+  return Object.keys(obj).filter((k) => !known.has(k))
+}
+
 function sortKeys(v) {
   if (Array.isArray(v)) return v.map(sortKeys)
   if (!v || typeof v !== 'object') return v
@@ -55,6 +68,11 @@ export function validate(descriptor) {
   }
 
   if (errors.length) return { valid: false, errors }
+
+  // Unknown top-level fields (schema: additionalProperties: false)
+  for (const k of unknownKeys(descriptor, KNOWN_ROOT_KEYS)) {
+    errors.push(`unknown_property:${k}`)
+  }
 
   // aap_version
   if (descriptor.aap_version !== '0.1') errors.push('aap_version_must_be_0_1')
@@ -115,6 +133,9 @@ export function validate(descriptor) {
     if (!auth || typeof auth !== 'object') {
       errors.push('authorization_must_be_object')
     } else {
+      for (const k of unknownKeys(auth, KNOWN_AUTHORIZATION_KEYS)) {
+        errors.push(`authorization.unknown_property:${k}`)
+      }
       if ('required' in auth && typeof auth.required !== 'boolean') errors.push('authorization.required_must_be_bool')
       if ('scopes' in auth) {
         if (!Array.isArray(auth.scopes)) errors.push('authorization.scopes_must_be_array')
@@ -136,6 +157,9 @@ export function validate(descriptor) {
     if (!inv || typeof inv !== 'object') {
       errors.push('invocation_must_be_object')
     } else {
+      for (const k of unknownKeys(inv, KNOWN_INVOCATION_KEYS)) {
+        errors.push(`invocation.unknown_property:${k}`)
+      }
       if ('mode' in inv && !VALID_INVOCATION_MODES.has(inv.mode)) {
         errors.push(`invocation.mode_unknown:${inv.mode}`)
       }

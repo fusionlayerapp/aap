@@ -125,6 +125,26 @@ describe('field validation', () => {
   })
 })
 
+describe('additional properties (schema: additionalProperties false)', () => {
+  test('unknown top-level property rejected', () => {
+    const r = validate(makeDescriptor({ totally_unknown_field: 'nope' }))
+    assert.equal(r.valid, false)
+    assert.ok(r.errors.includes('unknown_property:totally_unknown_field'), JSON.stringify(r.errors))
+  })
+
+  test('unknown authorization property rejected', () => {
+    const r = validate(makeDescriptor({ authorization: { required: true, bogus: 1 } }))
+    assert.equal(r.valid, false)
+    assert.ok(r.errors.includes('authorization.unknown_property:bogus'), JSON.stringify(r.errors))
+  })
+
+  test('unknown invocation property rejected', () => {
+    const r = validate(makeDescriptor({ invocation: { mode: 'sync', bogus: 1 } }))
+    assert.equal(r.valid, false)
+    assert.ok(r.errors.includes('invocation.unknown_property:bogus'), JSON.stringify(r.errors))
+  })
+})
+
 describe('signature verification', () => {
   test('valid signature passes', () => {
     const d = makeDescriptor()
