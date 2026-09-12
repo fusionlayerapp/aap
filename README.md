@@ -20,7 +20,7 @@ Every AI vendor describes callable tools/actions differently: MCP tool schemas, 
 
 ```bash
 # one-off (no install)
-npx aap-validate examples/mcp-search-web.json
+node tools/aap-validate/index.js examples/mcp-search-web.json
 
 # or install globally
 npm install -g aap-validate
@@ -80,7 +80,7 @@ Exit code 0 = valid. Exit code 1 = validation errors. Exit code 2 = cannot read 
 ## How to implement
 
 1. Write an Action Descriptor JSON document for your action, following [`schema/action-descriptor.schema.json`](schema/action-descriptor.schema.json) — see the worked example above and the rest of [`examples/`](examples/) for the MCP, Anthropic and OpenAI shapes.
-2. Validate it: `npx aap-validate my-action.json`.
+2. Validate it: `node tools/aap-validate/index.js my-action.json`.
 3. Ship the descriptor next to your tool/operator. Any AAP-aware caller can read `input_schema`/`output_schema` without vendor-specific glue, and you can map it to a specific vendor's native tool format using the tables in [§8 of the spec](spec/v0.1/AAP.md).
 
 ## Run tests
