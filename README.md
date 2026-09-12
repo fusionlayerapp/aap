@@ -19,15 +19,11 @@ Every AI vendor describes callable tools/actions differently: MCP tool schemas, 
 ## Validate a descriptor
 
 ```bash
-# one-off (no install)
+# from a clone of this repository (aap-validate is not published to npm yet)
 node tools/aap-validate/index.js examples/mcp-search-web.json
 
-# or install globally
-npm install -g aap-validate
-aap-validate my-action.json
-
 # programmatic
-import { validate } from 'aap-validate'
+import { validate } from './tools/aap-validate/index.js'
 const result = validate(JSON.parse(fs.readFileSync('my-action.json', 'utf8')))
 if (!result.valid) console.error(result.errors)
 ```
