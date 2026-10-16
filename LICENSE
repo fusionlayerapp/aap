@@ -1,0 +1,55 @@
+FusionLayer Open Protocol Specification — Copyright & Licensing Terms
+====================================================================
+Copyright (c) 2026 FusionLayer. All rights reserved.
+====================================================================
+
+This repository contains two categories of material, governed by the
+terms below:
+
+1. SPECIFICATION DOCUMENTS (spec/**, docs/**, README.md, CONFORMANCE.md, GOVERNANCE.md)
+   Copyright (c) 2026 FusionLayer. All rights reserved.
+
+   Permission is hereby granted, free of charge, to any person or
+   organization obtaining a copy of this Protocol Specification
+   (the "Specification") to read, copy, redistribute, and cite the
+   unmodified Specification in any medium for purposes of:
+     (a) cryptographic, security, and regulatory auditing (including
+         EU AI Act, GDPR, NIS2, DORA, and enterprise security reviews);
+     (b) academic research, teaching, and standards evaluation; and
+     (c) developing, testing, and verifying interoperable extensions,
+         connectors, SDK integrations, or compliant implementations.
+
+   Restrictions & Reservations:
+     - No Derivative Standards: You may not publish modified versions
+       of the Specification under the "FusionLayer", "Inkfold",
+       "UACP", "AAP", "FLP", "Capture-Manifest", "Adapter Protocol",
+       or confusingly similar names without prior written permission
+       from FusionLayer.
+     - Proprietary Engine Reserved: Publication of this Specification
+       does NOT grant any license, express or implied, to the
+       proprietary FusionLayer or Inkfold applications, runtime
+       engines, servers, or commercial source code.
+     - Trademarks: "FusionLayer", "Inkfold", and associated marks and
+       logos are trademarks of FusionLayer. No trademark license is
+       granted.
+
+2. SCHEMAS, TEST VECTORS & CONFORMANCE VALIDATORS (schema/**, examples/**, test-vectors/**, conformance/**, tools/**, validate.js)
+   MIT License — Copyright (c) 2026 FusionLayer
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of the JSON schemas, conformance test vectors, and validation scripts
+   (the "Conformance Suite"), to deal in the Conformance Suite without
+   restriction, including without limitation the rights to use, copy, modify,
+   merge, publish, distribute, sublicense, and/or sell copies of the
+   Conformance Suite, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Conformance Suite.
+
+   THE SPECIFICATION AND CONFORMANCE SUITE ARE PROVIDED "AS IS", WITHOUT
+   WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+   WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT. IN NO EVENT SHALL FUSIONLAYER OR THE COPYRIGHT HOLDERS BE
+   LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+   SPECIFICATION OR CONFORMANCE SUITE OR THE USE OR OTHER DEALINGS IN THEM.

@@ -1,0 +1,40 @@
+{
+  "aap_version": "0.1",
+  "id": "f1a3e5c7-2222-0000-bbbb-000000000002",
+  "name": "anthropic__computer_use",
+  "version": "1.0.0",
+  "description": "Control the computer: click, type, screenshot, scroll. Mapped from Anthropic computer_use tool.",
+  "side_effects": ["ui", "process"],
+  "input_schema": {
+    "type": "object",
+    "required": ["action"],
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "screenshot", "left_click", "right_click", "double_click",
+          "type", "key", "scroll", "cursor_position", "left_click_drag", "middle_click"
+        ]
+      },
+      "coordinate": {
+        "type": "array",
+        "items": { "type": "number" },
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "text": { "type": "string" }
+    }
+  },
+  "authorization": {
+    "required": true,
+    "principal_kind": "user"
+  },
+  "invocation": {
+    "mode": "sync",
+    "timeout_ms": 5000,
+    "idempotent": false
+  },
+  "vendor": "anthropic",
+  "tags": ["computer-use", "ui-automation"],
+  "descriptor_signature": "sha256:e91f30c23d632d46212a3bc9a840a81e423b5ba99b84a8f47130c6a36a2d2342"
+}

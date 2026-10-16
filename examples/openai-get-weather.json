@@ -1,0 +1,39 @@
+{
+  "aap_version": "0.1",
+  "id": "a9b7c5d3-3333-0000-cccc-000000000003",
+  "name": "get_current_weather",
+  "version": "1.0.0",
+  "description": "Get the current weather in a given location. Mapped from OpenAI function definition.",
+  "side_effects": ["network"],
+  "input_schema": {
+    "type": "object",
+    "required": ["location"],
+    "properties": {
+      "location": {
+        "type": "string",
+        "description": "The city and state, e.g. San Francisco, CA"
+      },
+      "unit": {
+        "type": "string",
+        "enum": ["celsius", "fahrenheit"]
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "location": { "type": "string" },
+      "temperature": { "type": "number" },
+      "unit": { "type": "string" },
+      "description": { "type": "string" }
+    }
+  },
+  "invocation": {
+    "mode": "sync",
+    "timeout_ms": 8000,
+    "idempotent": true
+  },
+  "vendor": "generic",
+  "tags": ["weather"],
+  "descriptor_signature": "sha256:647f7899a738b1d7cccce0d8db0cc34dc46320f6a408fb84e7d4bb122d943fd3"
+}

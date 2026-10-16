@@ -1,0 +1,18 @@
+{
+  "name": "aap",
+  "version": "0.1.0",
+  "description": "AAP — Agent Action Protocol Specification, Schemas & Conformance Validator",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tools/aap-validate/__tests__/validate.test.js",
+    "validate": "node tools/aap-validate/index.js"
+  },
+  "workspaces": [
+    "tools/aap-validate"
+  ],
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fusionlayerapp/aap.git"
+  }
+}

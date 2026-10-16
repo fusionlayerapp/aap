@@ -1,0 +1,36 @@
+{
+  "name": "aap-validate",
+  "version": "0.1.0",
+  "description": "Validator for AAP (Agent Action Protocol) action descriptors",
+  "type": "module",
+  "bin": {
+    "aap-validate": "./index.js"
+  },
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "aap",
+    "agent-action-protocol",
+    "validator",
+    "ai",
+    "mcp"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/hn2/aap",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hn2/aap.git",
+    "directory": "tools/aap-validate"
+  },
+  "bugs": {
+    "url": "https://github.com/hn2/aap/issues"
+  }
+}
