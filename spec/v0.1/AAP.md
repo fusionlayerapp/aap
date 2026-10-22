@@ -74,6 +74,9 @@ The normative schema is `schema/action-descriptor.schema.json`.
 | `authorization` | object | Authorization requirements (see §5). |
 | `invocation` | object | Invocation semantics (see §6). |
 | `vendor` | string | Vendor slug that exposes this action (e.g., `cursor`, `anthropic`). |
+| `execution_plane` | string | Execution plane: `local`, `cloud`, `pal3_peer`, or `hybrid`. |
+| `egress_class` | string | Data egress boundary (`local-only`, `peer-ok`, `cloud-ok`), aligned with `pal3-ai/1`. |
+| `economy` | object | Agent Micro-Economy & FinOps SLA metadata (`billing_model`, `price_per_call_usd`, `creator_royalty_bps`, `max_cost_usd`, `sla_latency_ms`). |
 | `tags` | array of string | Free-form labels. |
 
 ### Minimum descriptor (JSON)
