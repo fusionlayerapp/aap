@@ -20,6 +20,11 @@ const VALID_SIDE_EFFECTS = new Set([
 
 const VALID_PRINCIPAL_KINDS = new Set(['user', 'operator', 'system'])
 const VALID_INVOCATION_MODES = new Set(['sync', 'async', 'streaming'])
+const VALID_EXECUTION_PLANES = new Set(['local', 'cloud', 'pal3_peer', 'hybrid'])
+const VALID_EGRESS_CLASSES = new Set(['local-only', 'peer-ok', 'cloud-ok'])
+const VALID_CATALOG_TIERS = new Set(['primitive', 'blueprint', 'mesh_service'])
+const VALID_ADK_WORKFLOW_TYPES = new Set(['llm', 'sequential', 'parallel', 'loop'])
+const VALID_BILLING_MODELS = new Set(['free', 'per_call', 'per_token', 'royalty'])
 
 const NAME_PATTERN = /^[a-z][a-z0-9_]*$/
 const SEMVER_PATTERN = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/
@@ -29,10 +34,15 @@ const SHA256_SIG_PATTERN = /^sha256:[0-9a-f]{64}$/
 const KNOWN_ROOT_KEYS = new Set([
   'aap_version', 'id', 'name', 'version', 'description', 'side_effects',
   'input_schema', 'descriptor_signature', 'output_schema', 'authorization',
-  'invocation', 'vendor', 'tags',
+  'invocation', 'vendor', 'execution_plane', 'egress_class', 'catalog_tier',
+  'adk', 'economy', 'tags',
 ])
 const KNOWN_AUTHORIZATION_KEYS = new Set(['required', 'scopes', 'principal_kind'])
 const KNOWN_INVOCATION_KEYS = new Set(['mode', 'timeout_ms', 'idempotent', 'cancellable'])
+const KNOWN_ADK_KEYS = new Set(['workflow_type', 'output_key', 'sub_agents', 'transfer_allowed'])
+const KNOWN_ECONOMY_KEYS = new Set([
+  'billing_model', 'price_per_call_usd', 'creator_royalty_bps', 'compute_host_share_bps', 'max_cost_usd', 'sla_latency_ms',
+])
 
 function unknownKeys(obj, known) {
   return Object.keys(obj).filter((k) => !known.has(k))
@@ -171,6 +181,77 @@ export function validate(descriptor) {
       }
       if ('cancellable' in inv && typeof inv.cancellable !== 'boolean') {
         errors.push('invocation.cancellable_must_be_bool')
+      }
+    }
+  }
+
+  // Optional: execution_plane
+  if ('execution_plane' in descriptor && !VALID_EXECUTION_PLANES.has(descriptor.execution_plane)) {
+    errors.push(`execution_plane_unknown:${descriptor.execution_plane}`)
+  }
+
+  // Optional: egress_class
+  if ('egress_class' in descriptor && !VALID_EGRESS_CLASSES.has(descriptor.egress_class)) {
+    errors.push(`egress_class_unknown:${descriptor.egress_class}`)
+  }
+
+  // Optional: catalog_tier
+  if ('catalog_tier' in descriptor && !VALID_CATALOG_TIERS.has(descriptor.catalog_tier)) {
+    errors.push(`catalog_tier_unknown:${descriptor.catalog_tier}`)
+  }
+
+  // Optional: adk
+  if ('adk' in descriptor) {
+    const adk = descriptor.adk
+    if (!adk || typeof adk !== 'object' || Array.isArray(adk)) {
+      errors.push('adk_must_be_object')
+    } else {
+      for (const k of unknownKeys(adk, KNOWN_ADK_KEYS)) {
+        errors.push(`adk.unknown_property:${k}`)
+      }
+      if ('workflow_type' in adk && !VALID_ADK_WORKFLOW_TYPES.has(adk.workflow_type)) {
+        errors.push(`adk.workflow_type_unknown:${adk.workflow_type}`)
+      }
+      if ('output_key' in adk && (typeof adk.output_key !== 'string' || adk.output_key.length < 1 || adk.output_key.length > 128)) {
+        errors.push('adk.output_key_invalid')
+      }
+      if ('sub_agents' in adk) {
+        if (!Array.isArray(adk.sub_agents) || adk.sub_agents.some((s) => typeof s !== 'string' || s.length < 1)) {
+          errors.push('adk.sub_agents_must_be_string_array')
+        }
+      }
+      if ('transfer_allowed' in adk && typeof adk.transfer_allowed !== 'boolean') {
+        errors.push('adk.transfer_allowed_must_be_bool')
+      }
+    }
+  }
+
+  // Optional: economy
+  if ('economy' in descriptor) {
+    const econ = descriptor.economy
+    if (!econ || typeof econ !== 'object' || Array.isArray(econ)) {
+      errors.push('economy_must_be_object')
+    } else {
+      for (const k of unknownKeys(econ, KNOWN_ECONOMY_KEYS)) {
+        errors.push(`economy.unknown_property:${k}`)
+      }
+      if ('billing_model' in econ && !VALID_BILLING_MODELS.has(econ.billing_model)) {
+        errors.push(`economy.billing_model_unknown:${econ.billing_model}`)
+      }
+      if ('price_per_call_usd' in econ && (typeof econ.price_per_call_usd !== 'number' || !Number.isFinite(econ.price_per_call_usd) || econ.price_per_call_usd < 0)) {
+        errors.push('economy.price_per_call_usd_must_be_non_negative_number')
+      }
+      if ('creator_royalty_bps' in econ && (!Number.isInteger(econ.creator_royalty_bps) || econ.creator_royalty_bps < 0 || econ.creator_royalty_bps > 10000)) {
+        errors.push('economy.creator_royalty_bps_must_be_bps_integer')
+      }
+      if ('compute_host_share_bps' in econ && (!Number.isInteger(econ.compute_host_share_bps) || econ.compute_host_share_bps < 0 || econ.compute_host_share_bps > 10000)) {
+        errors.push('economy.compute_host_share_bps_must_be_bps_integer')
+      }
+      if ('max_cost_usd' in econ && (typeof econ.max_cost_usd !== 'number' || !Number.isFinite(econ.max_cost_usd) || econ.max_cost_usd < 0)) {
+        errors.push('economy.max_cost_usd_must_be_non_negative_number')
+      }
+      if ('sla_latency_ms' in econ && (!Number.isInteger(econ.sla_latency_ms) || econ.sla_latency_ms < 1)) {
+        errors.push('economy.sla_latency_ms_must_be_positive_integer')
       }
     }
   }

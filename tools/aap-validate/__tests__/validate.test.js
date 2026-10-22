@@ -272,3 +272,84 @@ describe('MCP / Anthropic / OpenAI round-trip shapes', () => {
     assert.equal(r.valid, true, JSON.stringify(r.errors))
   })
 })
+
+describe('distributed execution_plane, egress_class, and economy (#12)', () => {
+  test('valid PAL/3 distributed peer descriptor with economy metadata passes', () => {
+    const d = makeDescriptor({
+      name: 'pal3__verify_contract_vault',
+      execution_plane: 'pal3_peer',
+      egress_class: 'peer-ok',
+      economy: {
+        billing_model: 'royalty',
+        price_per_call_usd: 0.02,
+        creator_royalty_bps: 1500,
+        max_cost_usd: 0.1,
+        sla_latency_ms: 2500,
+      },
+    })
+    const r = validate(d)
+    assert.equal(r.valid, true, JSON.stringify(r.errors))
+  })
+
+  test('unknown execution_plane or egress_class is rejected', () => {
+    const r1 = validate(makeDescriptor({ execution_plane: 'quantum_cloud' }))
+    assert.equal(r1.valid, false)
+    assert.ok(r1.errors.includes('execution_plane_unknown:quantum_cloud'))
+
+    const r2 = validate(makeDescriptor({ egress_class: 'public-internet' }))
+    assert.equal(r2.valid, false)
+    assert.ok(r2.errors.includes('egress_class_unknown:public-internet'))
+  })
+
+  test('invalid economy properties are rejected', () => {
+    const r1 = validate(makeDescriptor({ economy: { billing_model: 'barter' } }))
+    assert.equal(r1.valid, false)
+    assert.ok(r1.errors.includes('economy.billing_model_unknown:barter'))
+
+    const r2 = validate(makeDescriptor({ economy: { creator_royalty_bps: 12000 } }))
+    assert.equal(r2.valid, false)
+    assert.ok(r2.errors.includes('economy.creator_royalty_bps_must_be_bps_integer'))
+
+    const r3 = validate(makeDescriptor({ economy: { price_per_call_usd: -0.01 } }))
+    assert.equal(r3.valid, false)
+    assert.ok(r3.errors.includes('economy.price_per_call_usd_must_be_non_negative_number'))
+
+    const r4 = validate(makeDescriptor({ economy: { unknown_econ_field: 1 } }))
+    assert.equal(r4.valid, false)
+    assert.ok(r4.errors.includes('economy.unknown_property:unknown_econ_field'))
+  })
+
+  test('valid unified catalog_tier and Google ADK workflow composition metadata passes (#13)', () => {
+    const d = makeDescriptor({
+      name: 'pal3__dora_sequential_audit',
+      catalog_tier: 'blueprint',
+      execution_plane: 'hybrid',
+      egress_class: 'peer-ok',
+      adk: {
+        workflow_type: 'sequential',
+        output_key: 'dora_audit_verdict',
+        sub_agents: ['pal3__ocr_extract', 'pal3__pii_redact_eu', 'pal3__verify_contract_vault'],
+        transfer_allowed: true,
+      },
+      economy: {
+        billing_model: 'royalty',
+        price_per_call_usd: 0.03,
+        creator_royalty_bps: 1500,
+        compute_host_share_bps: 5000,
+      },
+    })
+    const r = validate(d)
+    assert.equal(r.valid, true, JSON.stringify(r.errors))
+  })
+
+  test('invalid catalog_tier or adk workflow_type is rejected (#13)', () => {
+    const r1 = validate(makeDescriptor({ catalog_tier: 'nft_pack' }))
+    assert.equal(r1.valid, false)
+    assert.ok(r1.errors.includes('catalog_tier_unknown:nft_pack'))
+
+    const r2 = validate(makeDescriptor({ adk: { workflow_type: 'random_walk' } }))
+    assert.equal(r2.valid, false)
+    assert.ok(r2.errors.includes('adk.workflow_type_unknown:random_walk'))
+  })
+})
+

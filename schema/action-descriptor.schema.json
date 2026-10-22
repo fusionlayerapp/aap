@@ -118,6 +118,91 @@
       "maxLength": 128,
       "description": "Vendor slug that exposes this action (e.g., cursor, anthropic)."
     },
+    "execution_plane": {
+      "type": "string",
+      "enum": ["local", "cloud", "pal3_peer", "hybrid"],
+      "description": "Where the action executes: local device, cloud runtime, remote PAL/3 UDP peer, or hybrid."
+    },
+    "egress_class": {
+      "type": "string",
+      "enum": ["local-only", "peer-ok", "cloud-ok"],
+      "description": "Data egress classification aligned with pal3-ai/1 gateway enforcement."
+    },
+    "catalog_tier": {
+      "type": "string",
+      "enum": ["primitive", "blueprint", "mesh_service"],
+      "description": "Unified PAL Realm catalog tier: primitive (atomic tool), blueprint (composite ADK workflow), or mesh_service (live PAL/3 UDP 52474 peer worker)."
+    },
+    "adk": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Google ADK-aligned agent composition metadata (BaseAgent -> LlmAgent, SequentialAgent, ParallelAgent, LoopAgent, session.state output_key, and sub_agents delegation).",
+      "properties": {
+        "workflow_type": {
+          "type": "string",
+          "enum": ["llm", "sequential", "parallel", "loop"],
+          "description": "Orchestration pattern inspired by Google ADK."
+        },
+        "output_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Shared session.state key where this agent/tool stores its structured output."
+        },
+        "sub_agents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Ordered or parallel child primitive/blueprint IDs composed by this agent."
+        },
+        "transfer_allowed": {
+          "type": "boolean",
+          "description": "Whether dynamic LLM-driven sub-agent transfer (AgentTool / transfer_to_agent) is permitted."
+        }
+      }
+    },
+    "economy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Agent micro-economy pricing, FinOps budget ceiling, creator royalty, compute host share, and SLA metadata.",
+      "properties": {
+        "billing_model": {
+          "type": "string",
+          "enum": ["free", "per_call", "per_token", "royalty"],
+          "description": "How invocations of this action are metered in the Agent Economy."
+        },
+        "price_per_call_usd": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Fixed price per invocation in USD (0 for free/local)."
+        },
+        "creator_royalty_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000,
+          "description": "Marketplace creator royalty in basis points (100 bps = 1%)."
+        },
+        "compute_host_share_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000,
+          "description": "PAL/3 peer compute host settlement share in basis points (100 bps = 1%)."
+        },
+        "max_cost_usd": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Hard FinOps circuit-breaker ceiling for a single invocation in USD."
+        },
+        "sla_latency_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Target p95 execution SLA in milliseconds."
+        }
+      }
+    },
     "tags": {
       "type": "array",
       "items": {
